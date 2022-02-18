@@ -2,60 +2,21 @@ package client
 
 import (
 	"encoding/json"
-	"net/http"
-
-	"strings"
 
 	"github.com/broderickhyman/albiondata-client/lib"
 	"github.com/broderickhyman/albiondata-client/log"
 )
 
 type dispatcher struct {
-	publicUploaders  []uploader
-	privateUploaders []uploader
 }
 
 var (
-	wsHub *WSHub
-	dis   *dispatcher
+	dis *dispatcher
 )
 
 func createDispatcher() {
 	dis = &dispatcher{
-		publicUploaders:  createUploaders(strings.Split(ConfigGlobal.PublicIngestBaseUrls, ",")),
-		privateUploaders: createUploaders(strings.Split(ConfigGlobal.PrivateIngestBaseUrls, ",")),
 	}
-
-	if ConfigGlobal.EnableWebsockets {
-		wsHub = newHub()
-		go wsHub.run()
-		go runHTTPServer()
-	}
-}
-
-func createUploaders(targets []string) []uploader {
-	var uploaders []uploader
-	for _, target := range targets {
-		if target == "" {
-			continue
-		}
-		if len(target) < 4 {
-			log.Infof("Got an ingest target that was less than 4 characters, not a valid ingest target: %v", target)
-			continue
-		}
-
-		if target[0:8] == "http+pow" {
-			uploaders = append(uploaders, newHTTPUploaderPow(target))
-		} else if target[0:4] == "http" {
-			uploaders = append(uploaders, newHTTPUploader(target))
-		} else if target[0:4] == "nats" {
-			uploaders = append(uploaders, newNATSUploader(target))
-		} else {
-			log.Infof("An invalid ingest target was specified: %v", target)
-		}
-	}
-
-	return uploaders
 }
 
 func sendMsgToPublicUploaders(upload interface{}, topic string, state *albionState) {
@@ -67,11 +28,6 @@ func sendMsgToPublicUploaders(upload interface{}, topic string, state *albionSta
 
 	sendMsgToUploaders(data, topic, dis.publicUploaders)
 	sendMsgToUploaders(data, topic, dis.privateUploaders)
-
-	// If websockets are enabled, send the data there too
-	if ConfigGlobal.EnableWebsockets {
-		sendMsgToWebSockets(data, topic)
-	}
 }
 
 func sendMsgToPrivateUploaders(upload lib.PersonalizedUpload, topic string, state *albionState) {
@@ -99,11 +55,6 @@ func sendMsgToPrivateUploaders(upload lib.PersonalizedUpload, topic string, stat
 	if len(dis.privateUploaders) > 0 {
 		sendMsgToUploaders(data, topic, dis.privateUploaders)
 	}
-
-	// If websockets are enabled, send the data there too
-	if ConfigGlobal.EnableWebsockets {
-		sendMsgToWebSockets(data, topic)
-	}
 }
 
 func sendMsgToUploaders(msg []byte, topic string, uploaders []uploader) {
@@ -115,24 +66,4 @@ func sendMsgToUploaders(msg []byte, topic string, uploaders []uploader) {
 	for _, u := range uploaders {
 		u.sendToIngest(msg, topic)
 	}
-}
-
-func runHTTPServer() {
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(wsHub, w, r)
-	})
-
-	err := http.ListenAndServe(":8099", nil)
-
-	if err != nil {
-		log.Panic("ListenAndServe: ", err)
-	}
-}
-
-func sendMsgToWebSockets(msg []byte, topic string) {
-	// TODO (gradius): send JSON data with topic string
-	// TODO (gradius): this seems super hacky, and I'm sure there's a better way.
-	var result string
-	result = "{\"topic\": \"" + topic + "\", \"data\": " + string(msg) + "}"
-	wsHub.broadcast <- []byte(result)
 }

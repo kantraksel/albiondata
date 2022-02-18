@@ -1,7 +1,6 @@
 package client
 
 type config struct {
-	AllowedWSHosts                 []string
 	Debug                          bool
 	DebugEvents                    map[int]bool
 	DebugEventsString              string
@@ -11,7 +10,6 @@ type config struct {
 	DebugOperationsBlacklistString string
 	DebugIgnoreDecodingErrors      bool
 	DisableUpload                  bool
-	EnableWebsockets               bool
 	ListenDevices                  string
 	LogLevel                       string
 	LogToFile                      bool
@@ -19,8 +17,6 @@ type config struct {
 	Offline                        bool
 	OfflinePath                    string
 	RecordPath                     string
-	PrivateIngestBaseUrls          string
-	PublicIngestBaseUrls           string
 	NoCPULimit                     bool
 }
 

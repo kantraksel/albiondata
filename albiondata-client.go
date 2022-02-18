@@ -23,13 +23,9 @@ func init() {
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
 
-	// if we cannot find the configuration file, set Websockets to false
 	if err != nil {
-		viper.Set("EnableWebsockets", false)
 	}
 
-	client.ConfigGlobal.EnableWebsockets = viper.GetBool("EnableWebsockets")
-	client.ConfigGlobal.AllowedWSHosts = viper.GetStringSlice("AllowedWebsocketHosts")
 
 	flag.BoolVar(
 		&client.ConfigGlobal.Debug,
@@ -71,20 +67,6 @@ func init() {
 		"minimize",
 		false,
 		"Automatically minimize the window.",
-	)
-
-	flag.StringVar(
-		&client.ConfigGlobal.PublicIngestBaseUrls,
-		"i",
-		"http+pow://www.albion-online-data.com:4223",
-		"Base URL to send PUBLIC data to, can be 'nats://', 'http://' or 'noop' and can have multiple uploaders. Comma separated.",
-	)
-
-	flag.StringVar(
-		&client.ConfigGlobal.PrivateIngestBaseUrls,
-		"p",
-		"",
-		"Base URL to send PRIVATE data to, can be 'nats://', 'http://' or 'noop' and can have multiple uploaders. Comma separated.",
 	)
 
 	flag.StringVar(
@@ -140,6 +122,49 @@ func init() {
 func main() {
 	flag.Parse()
 
+	setupDebugs()
+	startUpdater()
+
+	go systray.Run()
+
+	c := client.NewClient(version)
+	err := c.Run()
+	if err != nil {
+		log.Error(err)
+		log.Error("The program encountered an error. Press any key to close this window.")
+		var b = make([]byte, 1)
+		_, _ = os.Stdin.Read(b)
+	}
+
+}
+
+func startUpdater() {
+	if version != "" && !strings.Contains(version, "dev") {
+		u := updater.NewUpdater(
+			version,
+			"broderickhyman",
+			"albiondata-client",
+			"update-",
+		)
+
+		go func() {
+			maxTries := 2
+			for i := 0; i < maxTries; i++ {
+				err := u.BackgroundUpdater()
+				if err != nil {
+					log.Error(err.Error())
+					log.Info("Will try again in 60 seconds. You may need to run the client as Administrator.")
+					// Sleep and hope the network connects
+					time.Sleep(time.Second * 60)
+				} else {
+					break
+				}
+			}
+		}()
+	}
+}
+
+func setupDebugs() {
 	if client.ConfigGlobal.Debug {
 		client.ConfigGlobal.LogLevel = "DEBUG"
 	}
@@ -194,45 +219,5 @@ func main() {
 
 	if client.ConfigGlobal.DisableUpload {
 		log.Info("Upload is disabled.")
-	}
-
-	startUpdater()
-
-	go systray.Run()
-
-	c := client.NewClient(version)
-	err = c.Run()
-	if err != nil {
-		log.Error(err)
-		log.Error("The program encountered an error. Press any key to close this window.")
-		var b = make([]byte, 1)
-		_, _ = os.Stdin.Read(b)
-	}
-
-}
-
-func startUpdater() {
-	if version != "" && !strings.Contains(version, "dev") {
-		u := updater.NewUpdater(
-			version,
-			"broderickhyman",
-			"albiondata-client",
-			"update-",
-		)
-
-		go func() {
-			maxTries := 2
-			for i := 0; i < maxTries; i++ {
-				err := u.BackgroundUpdater()
-				if err != nil {
-					log.Error(err.Error())
-					log.Info("Will try again in 60 seconds. You may need to run the client as Administrator.")
-					// Sleep and hope the network connects
-					time.Sleep(time.Second * 60)
-				} else {
-					break
-				}
-			}
-		}()
 	}
 }
