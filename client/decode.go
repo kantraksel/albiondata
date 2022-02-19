@@ -20,8 +20,6 @@ func decodeRequest(params map[uint8]interface{}) (operation operation, err error
 	switch OperationType(code) {
 	case opGetGameServerByCluster:
 		operation = &operationGetGameServerByCluster{}
-	case opGetClusterMapInfo:
-		operation = &operationGetClusterMapInfo{}
 	default:
 		return nil, nil
 	}
@@ -41,8 +39,6 @@ func decodeResponse(params map[uint8]interface{}) (operation operation, err erro
 	switch OperationType(code) {
 	case opJoin:
 		operation = &operationJoinResponse{}
-	case opGetClusterMapInfo:
-		operation = &operationGetClusterMapInfoResponse{}
 	default:
 		return nil, nil
 	}
