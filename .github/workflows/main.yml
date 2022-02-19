@@ -1,0 +1,57 @@
+name: Go workflow
+
+on:
+  push:
+      branch:
+        - 'workflow-tests'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      npcapVersion: 1.60
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+
+    - name: Download npcap
+      uses: wei/wget@v1
+      with:
+        args: -O npcap.exe https://npcap.com/dist/npcap-$npcapVersion.exe
+
+    - name: Build
+      run: go build -ldflags "-s -w -X main.version=$GITHUB_REF_NAME" -o albiondata.exe -v -x albiondata.go
+      env:
+        CGO_CPPFLAGS: "-I $GITHUB_WORKSPACE/thirdparty/WpdPack/Include/"
+        CGO_LDFLAGS: "-L $GITHUB_WORKSPACE/thirdparty/WpdPack/Lib/x64/"
+        GOOS: windows
+        GOARCH: amd64
+        CGO_ENABLED: 1
+        
+    - name: Add icon
+      run: $GITHUB_WORKSPACE/thirdparty/rcedit/rcedit.exe albiondata.exe --set-icon icon/albiondata-client.ico
+      
+    - name: Build installer
+      uses: joncloud/makensis-action@v3.6
+      with:
+        script-file: pkg/nsis/albiondata.nsi
+        arguments: -DPACKAGE_VERSION="$VERSION" -DPACKAGE="$PACKAGE" -DPACKAGE_NAME="$PACKAGE_NAME" -DPACKAGE_EXE="$PACKAGE_EXE" -DTOP_SRCDIR="$TOP_SRCDIR" -DOUTFILE="$TOP_SRCDIR/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID $INSTALLER_COMPRESSION"
+      env:
+        VERSION: $GITHUB_REF_NAME
+        PACKAGE: albiondata
+        PACKAGE_NAME: Albion Data
+        PACKAGE_EXE: albiondata.exe
+        TOP_SRCDIR: $GITHUB_WORKSPACE
+        INSTALLER_COMPRESSION: lzma
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: installer
+        path: abiondata-installer.exe
+        if-no-files-found: error
+        retention-days: 7
