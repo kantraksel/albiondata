@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: windows-latest
     env:
-      npcapVersion: 1.60
+      npcapVersion: "1.60"
       GITHUB_REF_NAME: 0.0.0
     steps:
     - uses: actions/checkout@v2
@@ -21,27 +21,24 @@ jobs:
 
     - name: Download npcap
       run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-${{ env.npcapVersion }}.exe
-      
-    - name: Debug exit
-      run: exit 1
 
     - name: Build
-      run: go build -ldflags "-s -w -X main.version=${env:GITHUB_REF_NAME}" -o albiondata.exe -v -x albiondata.go
+      run: go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" -o albiondata.exe -v -x albiondata.go
       env:
-        CGO_CPPFLAGS: "-I ${env:GITHUB_WORKSPACE}/thirdparty/WpdPack/Include/"
-        CGO_LDFLAGS: "-L ${env:GITHUB_WORKSPACE}/thirdparty/WpdPack/Lib/x64/"
+        CGO_CPPFLAGS: "-I ${{ env.workspace }}/thirdparty/WpdPack/Include/"
+        CGO_LDFLAGS: "-L ${{ env.workspace }}/thirdparty/WpdPack/Lib/x64/"
         GOOS: windows
         GOARCH: amd64
         CGO_ENABLED: 1
         
     - name: Add icon
-      run: ${env:GITHUB_WORKSPACE}/thirdparty/rcedit/rcedit.exe albiondata.exe --set-icon icon/albiondata-client.ico
+      run: ${{ env.workspace }}/thirdparty/rcedit/rcedit.exe albiondata.exe --set-icon icon/albiondata-client.ico
       
     - name: Build installer
       uses: joncloud/makensis-action@v3.6
       with:
         script-file: pkg/nsis/albiondata.nsi
-        arguments: -DPACKAGE_VERSION="${env:VERSION}" -DPACKAGE="${env:PACKAGE}" -DPACKAGE_NAME="${env:PACKAGE_NAME}" -DPACKAGE_EXE="${env:PACKAGE_EXE}" -DTOP_SRCDIR="${env:TOP_SRCDIR}" -DOUTFILE="${env:TOP_SRCDIR}/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID ${env:INSTALLER_COMPRESSION}"
+        arguments: -DPACKAGE_VERSION="${{ env.VERSION}" -DPACKAGE="${{ env.PACKAGE }}" -DPACKAGE_NAME="${{ env.PACKAGE_NAME }}" -DPACKAGE_EXE="${{ env.PACKAGE_EXE }}" -DTOP_SRCDIR="${{ env.TOP_SRCDIR }}" -DOUTFILE="${{ env.TOP_SRCDIR }}/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID ${{ env.INSTALLER_COMPRESSION }}"
       env:
         VERSION: $GITHUB_REF_NAME
         PACKAGE: albiondata
