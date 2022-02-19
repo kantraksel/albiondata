@@ -51,6 +51,6 @@ jobs:
       uses: actions/upload-artifact@v2.3.1
       with:
         name: installer
-        path: abiondata-installer.exe
+        path: albiondata-installer.exe
         if-no-files-found: error
         retention-days: 7
