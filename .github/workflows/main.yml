@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     env:
       npcapVersion: "1.60"
-      GITHUB_REF_NAME: 0.0.0
+      appVersion: "0.0.0"
     steps:
     - uses: actions/checkout@v2
 
@@ -40,7 +40,7 @@ jobs:
         script-file: pkg/nsis/albiondata.nsi
         arguments: -DPACKAGE_VERSION="${{ env.VERSION }}" -DPACKAGE="${{ env.PACKAGE }}" -DPACKAGE_NAME="${{ env.PACKAGE_NAME }}" -DPACKAGE_EXE="${{ env.PACKAGE_EXE }}" -DTOP_SRCDIR="${{ env.TOP_SRCDIR }}" -DOUTFILE="${{ env.TOP_SRCDIR }}/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID ${{ env.INSTALLER_COMPRESSION }}"
       env:
-        VERSION: ${{ github.ref_name }}
+        VERSION: ${{ env.appVersion }}
         PACKAGE: albiondata
         PACKAGE_NAME: Albion Data
         PACKAGE_EXE: albiondata.exe
