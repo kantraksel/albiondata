@@ -20,7 +20,7 @@ jobs:
         go-version: 1.17
 
     - name: Download npcap
-      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-${{ npcapVersion }}.exe
+      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-${{ env.npcapVersion }}.exe
       
     - name: Debug exit
       run: exit 1
