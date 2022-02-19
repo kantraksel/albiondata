@@ -20,18 +20,8 @@ func decodeRequest(params map[uint8]interface{}) (operation operation, err error
 	switch OperationType(code) {
 	case opGetGameServerByCluster:
 		operation = &operationGetGameServerByCluster{}
-	case opAuctionGetOffers:
-		operation = &operationAuctionGetOffers{}
-	case opAuctionGetItemAverageStats:
-		operation = &operationAuctionGetItemAverageStats{}
 	case opGetClusterMapInfo:
 		operation = &operationGetClusterMapInfo{}
-	case opGoldMarketGetAverageInfo:
-		operation = &operationGoldMarketGetAverageInfo{}
-	case opRealEstateGetAuctionData:
-		operation = &operationRealEstateGetAuctionData{}
-	case opRealEstateBidOnAuction:
-		operation = &operationRealEstateBidOnAuction{}
 	default:
 		return nil, nil
 	}
@@ -51,24 +41,8 @@ func decodeResponse(params map[uint8]interface{}) (operation operation, err erro
 	switch OperationType(code) {
 	case opJoin:
 		operation = &operationJoinResponse{}
-	case opAuctionGetOffers:
-		operation = &operationAuctionGetOffersResponse{}
-	case opAuctionGetRequests:
-		operation = &operationAuctionGetRequestsResponse{}
-	case opAuctionBuyOffer:
-		operation = &operationAuctionGetRequestsResponse{}
-	case opAuctionGetItemAverageStats:
-		operation = &operationAuctionGetItemAverageStatsResponse{}
-	case opReadMail:
-		operation = &operationReadMail{}
 	case opGetClusterMapInfo:
 		operation = &operationGetClusterMapInfoResponse{}
-	case opGoldMarketGetAverageInfo:
-		operation = &operationGoldMarketGetAverageInfoResponse{}
-	case opRealEstateGetAuctionData:
-		operation = &operationRealEstateGetAuctionDataResponse{}
-	case opRealEstateBidOnAuction:
-		operation = &operationRealEstateBidOnAuctionResponse{}
 	default:
 		return nil, nil
 	}
