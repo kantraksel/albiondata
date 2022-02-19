@@ -10,6 +10,7 @@ jobs:
     runs-on: windows-latest
     env:
       npcapVersion: 1.60
+      GITHUB_REF_NAME: 0.0.0
     steps:
     - uses: actions/checkout@v2
 
@@ -19,9 +20,7 @@ jobs:
         go-version: 1.17
 
     - name: Download npcap
-      uses: wei/wget@v1
-      with:
-        args: -O npcap.exe https://npcap.com/dist/npcap-$npcapVersion.exe
+      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-$npcapVersion.exe
 
     - name: Build
       run: go build -ldflags "-s -w -X main.version=$GITHUB_REF_NAME" -o albiondata.exe -v -x albiondata.go
