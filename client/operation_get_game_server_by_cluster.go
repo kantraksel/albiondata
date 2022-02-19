@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/broderickhyman/albiondata-client/log"
+	"github.com/kantraksel/albiondata/log"
 )
 
 type operationGetGameServerByCluster struct {

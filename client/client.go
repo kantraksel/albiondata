@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/broderickhyman/albiondata-client/log"
+	"github.com/kantraksel/albiondata/log"
 	colorable "github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
 )

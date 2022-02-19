@@ -1,4 +1,4 @@
-module github.com/broderickhyman/albiondata-client
+module github.com/kantraksel/albiondata
 
 go 1.16
 

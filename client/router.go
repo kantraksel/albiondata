@@ -4,8 +4,8 @@ import (
 	"encoding/gob"
 	"os"
 
-	"github.com/broderickhyman/albiondata-client/log"
 	photon "github.com/broderickhyman/photon_spectator"
+	"github.com/kantraksel/albiondata/log"
 )
 
 //Router struct definitions

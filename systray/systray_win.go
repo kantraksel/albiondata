@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/broderickhyman/albiondata-client/client"
+	"github.com/kantraksel/albiondata/client"
 
-	"github.com/broderickhyman/albiondata-client/icon"
 	"github.com/getlantern/systray"
 	"github.com/gonutz/w32"
+	"github.com/kantraksel/albiondata/icon"
 )
 
 var consoleHidden bool

@@ -3,7 +3,7 @@
 package notification
 
 import (
-	"github.com/broderickhyman/albiondata-client/log"
+	"github.com/kantraksel/albiondata/log"
 	toast "gopkg.in/toast.v1"
 )
 

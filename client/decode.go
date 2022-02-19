@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/broderickhyman/albiondata-client/lib"
-	"github.com/broderickhyman/albiondata-client/log"
+	"github.com/kantraksel/albiondata/lib"
+	"github.com/kantraksel/albiondata/log"
 	"github.com/mitchellh/mapstructure"
 )
 

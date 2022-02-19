@@ -1,9 +1,9 @@
 package client
 
 import (
-	"github.com/broderickhyman/albiondata-client/lib"
-	"github.com/broderickhyman/albiondata-client/log"
-	"github.com/broderickhyman/albiondata-client/notification"
+	"github.com/kantraksel/albiondata/lib"
+	"github.com/kantraksel/albiondata/log"
+	"github.com/kantraksel/albiondata/notification"
 )
 
 //CacheSize limit size of messages in cache

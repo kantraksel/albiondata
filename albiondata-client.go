@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/broderickhyman/albiondata-client/client"
-	"github.com/broderickhyman/albiondata-client/log"
-	"github.com/broderickhyman/albiondata-client/systray"
 	"github.com/broderickhyman/go-githubupdate/updater"
+	"github.com/kantraksel/albiondata/client"
+	"github.com/kantraksel/albiondata/log"
+	"github.com/kantraksel/albiondata/systray"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
