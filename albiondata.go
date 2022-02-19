@@ -110,7 +110,7 @@ func init() {
 	flag.BoolVar(
 		&client.ConfigGlobal.DebugIgnoreDecodingErrors,
 		"ignore-decode-errors",
-		false,
+		true,
 		"Ignore the decoding errors when debugging",
 	)
 
