@@ -24,8 +24,11 @@ func init() {
 	err := viper.ReadInConfig()
 
 	if err != nil {
+		log.Error("Failed to read config.yaml")
+		os.Exit(1)
 	}
 
+	client.ConfigGlobal.RemoteServer = viper.GetString("RemoteServer")
 
 	flag.BoolVar(
 		&client.ConfigGlobal.Debug,

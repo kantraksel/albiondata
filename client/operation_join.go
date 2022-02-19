@@ -28,6 +28,7 @@ func (op operationJoinResponse) Process(state *albionState) {
 	} else {
 		state.LocationId = loc
 	}
+	state.LocationString = op.Location
 	log.Infof("Updating player location to %v.", op.Location)
 
 	if state.CharacterId != op.CharacterID {
@@ -35,8 +36,10 @@ func (op operationJoinResponse) Process(state *albionState) {
 	}
 	state.CharacterId = op.CharacterID
 
-	if state.CharacterName != op.CharacterName {
+	/*if state.CharacterName != op.CharacterName {
 		log.Infof("Updating player to %v.", op.CharacterName)
 	}
-	state.CharacterName = op.CharacterName
+	state.CharacterName = op.CharacterName*/
+
+	sendMsgToUploader(state, "", state)
 }

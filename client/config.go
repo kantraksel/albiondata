@@ -17,6 +17,7 @@ type config struct {
 	Offline                        bool
 	OfflinePath                    string
 	RecordPath                     string
+	RemoteServer                   string
 	NoCPULimit                     bool
 }
 
