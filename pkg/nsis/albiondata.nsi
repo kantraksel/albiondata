@@ -29,11 +29,11 @@ RequestExecutionLevel admin
 ;Versioninfo
 
 VIProductVersion "${PACKAGE_VERSION}.0"
-VIAddVersionKey "CompanyName"	"The Albion Data Project"
+VIAddVersionKey "CompanyName"	"Kantraksel"
 VIAddVersionKey "FileDescription"	"${PACKAGE_NAME} Installer"
 VIAddVersionKey "FileVersion"		"${PACKAGE_VERSION}"
 VIAddVersionKey "InternalName"	"${PACKAGE_NAME}"
-VIAddVersionKey "LegalCopyright"	"Copyright (c) 2017 The Albion Data Project"
+VIAddVersionKey "LegalCopyright"	"Copyright (c) 2022 Kantraksel"
 VIAddVersionKey "OriginalFilename"	"${PACKAGE}-${PACKAGE_VERSION}-installer.exe"
 VIAddVersionKey "ProductName"	"${PACKAGE_NAME}"
 VIAddVersionKey "ProductVersion"	"${PACKAGE_VERSION}"
@@ -112,9 +112,9 @@ Section $(TEXT_SecBase) SecBase
   ; Main executable
   File "${TOP_SRCDIR}\${PACKAGE_EXE}"
 
-  ; WinPCAP driver
-  File "${TOP_SRCDIR}\thirdparty\WinPcap_4_1_3.exe"
-  PUSH "WinPcap_4_1_3.exe"
+  ; Npcap driver
+  File "${TOP_SRCDIR}\npcap.exe"
+  PUSH "npcap.exe"
 
   File "${TOP_SRCDIR}\LICENSE"
   Push "LICENSE"
@@ -128,7 +128,7 @@ Section $(TEXT_SecBase) SecBase
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayName" "${PACKAGE_NAME}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${PACKAGE_VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\${PACKAGE}.exe,0"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "Publisher" "The Albion Data Project"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "Publisher" "Kantraksel"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "URLInfoAbout" "${PACKAGE_BUGREPORT}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\uninstall.exe"
@@ -150,14 +150,14 @@ Section $(TEXT_SecBase) SecBase
   CreateShortCut "$DESKTOP\${PACKAGE_NAME}.lnk" "$INSTDIR\${PACKAGE_EXE}"
 
 ; Create Task to run the Client as Admin on Logon
-  Exec 'c:\Windows\System32\schtasks.exe /Create /F /SC ONLOGON /RL HIGHEST /TN "Albion Data Client" /TR "\"$INSTDIR\albiondata-client.exe\" -minimize"'
+  Exec 'c:\Windows\System32\schtasks.exe /Create /F /SC ONLOGON /RL HIGHEST /TN "Albion Data" /TR "\"$INSTDIR\albiondata.exe\" -minimize"'
 
 SectionEnd
 
 Section $(TEXT_SecWinPcap) SecWinPcap
   SetOutPath "$INSTDIR"
-  File "${TOP_SRCDIR}\thirdparty\WinPcap_4_1_3.exe"
-  ExecWait '"$INSTDIR\WinPcap_4_1_3.exe"'
+  File "${TOP_SRCDIR}\npcap.exe"
+  ExecWait '"$INSTDIR\npcap.exe"'
 SectionEnd
 
 
@@ -207,8 +207,8 @@ FunctionEnd
 LangString TEXT_SecBase ${LANG_ENGLISH} "Core files"
 LangString DESC_SecBase ${LANG_ENGLISH} "The core files required to run ${PACKAGE_NAME}."
 
-LangString TEXT_SecWinPcap ${LANG_ENGLISH} "WinPCAP"
-LangString DESC_SecWinPcap ${LANG_ENGLISH} "WinPCAP Driver"
+LangString TEXT_SecWinPcap ${LANG_ENGLISH} "NPCAP"
+LangString DESC_SecWinPcap ${LANG_ENGLISH} "NPCAP Driver"
 
 
 ;--------------------------------
@@ -219,8 +219,8 @@ Section "Uninstall"
   ; Main executable
   Delete "$INSTDIR\${PACKAGE_EXE}"
 
-  ; WinPCAP driver
-  Delete "$INSTDIR\WinPcap_4_1_3.exe"
+  ; NPCAP driver
+  Delete "$INSTDIR\npcap.exe"
   Delete "$INSTDIR\LICENSE.txt"
   Delete "$INSTDIR\uninstall.exe"
   RmDir "$INSTDIR"
@@ -243,7 +243,7 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
 
 ; Task
-  Exec 'c:\Windows\System32\schtasks.exe /Delete /TN "Albion Data Client" /F'
+  Exec 'c:\Windows\System32\schtasks.exe /Delete /TN "Albion Data" /F'
 
 SectionEnd
 
