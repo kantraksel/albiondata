@@ -32,7 +32,7 @@ jobs:
         CGO_ENABLED: 1
         
     - name: Add icon
-      run: $GITHUB_WORKSPACE/thirdparty/rcedit/rcedit.exe albiondata.exe --set-icon icon/albiondata-client.ico
+      run: "$GITHUB_WORKSPACE/thirdparty/rcedit/rcedit.exe" albiondata.exe --set-icon icon/albiondata-client.ico
       
     - name: Build installer
       uses: joncloud/makensis-action@v3.6
