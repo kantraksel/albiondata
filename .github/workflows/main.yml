@@ -20,13 +20,13 @@ jobs:
         go-version: 1.17
 
     - name: Download npcap
-      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-$npcapVersion.exe
+      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-$env:npcapVersion.exe
 
     - name: Build
-      run: go build -ldflags "-s -w -X main.version=$GITHUB_REF_NAME" -o albiondata.exe -v -x albiondata.go
+      run: go build -ldflags "-s -w -X main.version=$env:GITHUB_REF_NAME" -o albiondata.exe -v -x albiondata.go
       env:
-        CGO_CPPFLAGS: "-I $GITHUB_WORKSPACE/thirdparty/WpdPack/Include/"
-        CGO_LDFLAGS: "-L $GITHUB_WORKSPACE/thirdparty/WpdPack/Lib/x64/"
+        CGO_CPPFLAGS: "-I $env:GITHUB_WORKSPACE/thirdparty/WpdPack/Include/"
+        CGO_LDFLAGS: "-L $env:GITHUB_WORKSPACE/thirdparty/WpdPack/Lib/x64/"
         GOOS: windows
         GOARCH: amd64
         CGO_ENABLED: 1
@@ -38,7 +38,7 @@ jobs:
       uses: joncloud/makensis-action@v3.6
       with:
         script-file: pkg/nsis/albiondata.nsi
-        arguments: -DPACKAGE_VERSION="$VERSION" -DPACKAGE="$PACKAGE" -DPACKAGE_NAME="$PACKAGE_NAME" -DPACKAGE_EXE="$PACKAGE_EXE" -DTOP_SRCDIR="$TOP_SRCDIR" -DOUTFILE="$TOP_SRCDIR/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID $INSTALLER_COMPRESSION"
+        arguments: -DPACKAGE_VERSION="$env:VERSION" -DPACKAGE="$env:PACKAGE" -DPACKAGE_NAME="$env:PACKAGE_NAME" -DPACKAGE_EXE="$env:PACKAGE_EXE" -DTOP_SRCDIR="$env:TOP_SRCDIR" -DOUTFILE="$env:TOP_SRCDIR/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID $env:INSTALLER_COMPRESSION"
       env:
         VERSION: $GITHUB_REF_NAME
         PACKAGE: albiondata
