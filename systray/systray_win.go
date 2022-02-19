@@ -64,10 +64,10 @@ func onReady() {
 		hideConsole()
 	}
 	systray.SetIcon(icon.Data)
-	systray.SetTitle("Albion Data Client")
-	systray.SetTooltip("Albion Data Client")
+	systray.SetTitle("Albion Data")
+	systray.SetTooltip("Albion Data")
 	mConHideShow := systray.AddMenuItem(GetActionTitle(), "Show/Hide Console")
-	mQuit := systray.AddMenuItem("Quit", "Close the Albion Data Client")
+	mQuit := systray.AddMenuItem("Quit", "Close the Albion Data")
 
 	func() {
 		for {
