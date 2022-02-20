@@ -9,6 +9,7 @@
 !include "MUI2.nsh"
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
+!include "WinCore.nsh"
 
 ;--------------------------------
 ;General
@@ -19,9 +20,10 @@ Name "${PACKAGE_NAME}"
 OutFile "${OUTFILE}"
 
 ;Default installation folder
-InstallDir "$PROGRAMFILES64\${PACKAGE_NAME}"
+;Don't set a default $InstDir so we can detect /D= and InstallDirRegKey
+InstallDir ""
 ;Get installation folder from registry if available
-InstallDirRegKey HKLM "Software\${PACKAGE_NAME}" ""
+InstallDirRegKey HKCU "Software\${PACKAGE_NAME}" ""
 ;Request application privileges for Windows Vista
 RequestExecutionLevel admin
 
@@ -50,7 +52,7 @@ Var STARTMENU_FOLDER
 
 ;--------------------------------
 ;Start Menu Folder Page Configuration (for MUI_PAGE_STARTMENU)
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${PACKAGE_NAME}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
@@ -93,6 +95,13 @@ Var STARTMENU_FOLDER
 
 
 Function .onInit
+  SetShellVarContext Current
+  ${If} $InstDir == "" ; No /D= nor InstallDirRegKey?
+    GetKnownFolderPath $InstDir ${FOLDERID_UserProgramFiles} ; This folder only exists on Win7+
+    StrCmp $InstDir "" 0 +2 
+    StrCpy $InstDir "$LocalAppData\Programs" ; Fallback directory
+    StrCpy $InstDir "$InstDir\$(^Name)"
+  ${EndIf}
 
   !insertmacro MUI_LANGDLL_DISPLAY
 
@@ -122,18 +131,17 @@ Section $(TEXT_SecBase) SecBase
   Call unix2dos
 
   ;Store installation folder
-  WriteRegStr HKLM "Software\${PACKAGE_NAME}" "" $INSTDIR
+  WriteRegStr HKCU "Software\${PACKAGE_NAME}" "" $INSTDIR
 
   ; Write the Windows-uninstall keys
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayName" "${PACKAGE_NAME}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${PACKAGE_VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\${PACKAGE}.exe,0"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "Publisher" "Kantraksel"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "URLInfoAbout" "${PACKAGE_BUGREPORT}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\uninstall.exe"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "NoRepair" 1
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayName" "${PACKAGE_NAME}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${PACKAGE_VERSION}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\${PACKAGE}.exe,0"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "Publisher" "Kantraksel"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\uninstall.exe"
+  WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "NoModify" 1
+  WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "NoRepair" 1
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\uninstall.exe"
@@ -150,7 +158,7 @@ Section $(TEXT_SecBase) SecBase
   CreateShortCut "$DESKTOP\${PACKAGE_NAME}.lnk" "$INSTDIR\${PACKAGE_EXE}"
 
 ; Create Task to run the Client as Admin on Logon
-  Exec 'c:\Windows\System32\schtasks.exe /Create /F /SC ONLOGON /RL HIGHEST /TN "Albion Data" /TR "\"$INSTDIR\albiondata.exe\" -minimize"'
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "${PACKAGE_NAME}" '"$InstDir\${PACKAGE}.exe"'
 
 SectionEnd
 
@@ -235,15 +243,13 @@ Section "Uninstall"
   RmDir "$SMPROGRAMS\$STARTMENU_FOLDER"
 
   ; Registry
-  DeleteRegValue HKLM "Software\${PACKAGE_NAME}" "Start Menu Folder"
-  DeleteRegValue HKLM "Software\${PACKAGE_NAME}" ""
-  DeleteRegKey /ifempty HKLM "Software\${PACKAGE_NAME}"
+  DeleteRegKey HKCU "Software\${PACKAGE_NAME}"
 
   ; Unregister with Windows' uninstall system
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
+  DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
 
-; Task
-  Exec 'c:\Windows\System32\schtasks.exe /Delete /TN "Albion Data" /F'
+  ; Task
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "${PACKAGE_NAME}"
 
 SectionEnd
 
