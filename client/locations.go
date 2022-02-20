@@ -22,7 +22,9 @@ func checkLocation(location int) {
 	if !isKnown {
 		info := fmt.Sprintf("Location %d is unknown. Please share where you've entered!", location)
 		log.Info(info)
-		notification.Push(info)
+		if !ConfigGlobal.DisableNotifications {
+			notification.Push(info)
+		}
 	}
 }
 

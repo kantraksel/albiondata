@@ -20,6 +20,7 @@ type config struct {
 	RemoteServer                   string
 	NoCPULimit                     bool
 	DataUrl                        string
+	DisableNotifications           bool
 }
 
 //ConfigGlobal global config data
