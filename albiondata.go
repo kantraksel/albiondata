@@ -29,6 +29,7 @@ func init() {
 	}
 
 	client.ConfigGlobal.RemoteServer = viper.GetString("RemoteServer")
+	client.ConfigGlobal.DataUrl = viper.GetString("DataUrl")
 
 	flag.BoolVar(
 		&client.ConfigGlobal.Debug,
@@ -145,8 +146,8 @@ func startUpdater() {
 	if version != "" && !strings.Contains(version, "dev") {
 		u := updater.NewUpdater(
 			version,
-			"broderickhyman",
-			"albiondata-client",
+			"kantraksel",
+			"albiondata",
 			"update-",
 		)
 

@@ -60,6 +60,7 @@ func (client *Client) Run() error {
 	}
 
 	createDispatcher()
+	createLocations()
 
 	if ConfigGlobal.Offline {
 		processOffline(ConfigGlobal.OfflinePath)

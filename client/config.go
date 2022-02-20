@@ -19,6 +19,7 @@ type config struct {
 	RecordPath                     string
 	RemoteServer                   string
 	NoCPULimit                     bool
+	DataUrl                        string
 }
 
 //ConfigGlobal global config data

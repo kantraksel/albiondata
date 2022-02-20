@@ -27,6 +27,7 @@ func (op operationJoinResponse) Process(state *albionState) {
 		state.LocationId = -2
 	} else {
 		state.LocationId = loc
+		checkLocation(loc)
 	}
 	state.LocationString = op.Location
 	log.Infof("Updating player location to %v.", op.Location)
