@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     env:
       npcapVersion: "1.60"
-      appVersion: "7.0.0"
+      appVersion: ${{ github.ref_name }}
     steps:
     - uses: actions/checkout@v2
 
