@@ -24,6 +24,6 @@ func (op operationGetGameServerByCluster) Process(state *albionState) {
 		return
 	}
 
-	log.Infof("Updating player location to %v.", zoneInt)
+	log.Infof("GetGameServerByCluster: Updating player location to %v.", zoneInt)
 	state.LocationId = zoneInt
 }

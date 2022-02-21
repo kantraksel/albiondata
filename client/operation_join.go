@@ -2,6 +2,7 @@ package client
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/kantraksel/albiondata/lib"
 	"github.com/kantraksel/albiondata/log"
@@ -21,7 +22,7 @@ type operationJoinResponse struct {
 func (op operationJoinResponse) Process(state *albionState) {
 	log.Debugf("Got JoinResponse operation...")
 
-	loc, err := strconv.Atoi(op.Location)
+	loc, err := strconv.Atoi(strings.SplitN(op.Location, "-", 2)[0])
 	if err != nil {
 		log.Debugf("Unable to convert zoneID to int. Probably an instance.")
 		state.LocationId = -2
