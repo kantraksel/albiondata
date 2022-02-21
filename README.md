@@ -1,4 +1,4 @@
-[![Build app](https://github.com/kantraksel/albiondata/actions/workflows/main.yml/badge.svg?branch=main-fork)](https://github.com/kantraksel/albiondata/actions/workflows/main.yml)
+[![Build app](https://github.com/kantraksel/albiondata/actions/workflows/main.yml/badge.svg)](https://github.com/kantraksel/albiondata/actions/workflows/main.yml)
 
 # Albion Data
 Custom data collector.
