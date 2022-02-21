@@ -1,0 +1,56 @@
+name: Build app
+
+on:
+  push:
+      tags:
+        - *
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      npcapVersion: "1.60"
+      appVersion: "7.0.0"
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+
+    - name: Download npcap
+      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-${{ env.npcapVersion }}.exe
+
+    - name: Build
+      run: go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" -o albiondata.exe -v -x albiondata.go
+      env:
+        CGO_CPPFLAGS: "-I ${{ env.workspace }}/thirdparty/WpdPack/Include/"
+        CGO_LDFLAGS: "-L ${{ env.workspace }}/thirdparty/WpdPack/Lib/x64/"
+        GOOS: windows
+        GOARCH: amd64
+        CGO_ENABLED: 1
+        
+    - name: Add icon
+      run: ${{ github.workspace }}/thirdparty/rcedit/rcedit.exe albiondata.exe --set-icon icon/albiondata-client.ico
+      
+    - name: Build installer
+      uses: joncloud/makensis-action@v3.6
+      with:
+        script-file: pkg/nsis/albiondata.nsi
+        arguments: -DPACKAGE_VERSION="${{ env.VERSION }}" -DPACKAGE="${{ env.PACKAGE }}" -DPACKAGE_NAME="${{ env.PACKAGE_NAME }}" -DPACKAGE_EXE="${{ env.PACKAGE_EXE }}" -DTOP_SRCDIR="${{ env.TOP_SRCDIR }}" -DOUTFILE="${{ env.TOP_SRCDIR }}/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID ${{ env.INSTALLER_COMPRESSION }}"
+      env:
+        VERSION: ${{ env.appVersion }}
+        PACKAGE: albiondata
+        PACKAGE_NAME: Albion Data
+        PACKAGE_EXE: albiondata.exe
+        TOP_SRCDIR: ${{ github.workspace }}
+        INSTALLER_COMPRESSION: lzma
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: installer
+        path: albiondata-installer.exe
+        if-no-files-found: error
+        retention-days: 7
