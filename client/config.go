@@ -21,6 +21,7 @@ type config struct {
 	NoCPULimit                     bool
 	DataUrl                        string
 	DisableNotifications           bool
+	TargetCharacterId              string
 }
 
 //ConfigGlobal global config data

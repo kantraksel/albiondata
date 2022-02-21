@@ -31,6 +31,7 @@ func init() {
 	client.ConfigGlobal.RemoteServer = viper.GetString("RemoteServer")
 	client.ConfigGlobal.DataUrl = viper.GetString("DataUrl")
 	client.ConfigGlobal.DisableNotifications = viper.GetBool("NoNotifications")
+	client.ConfigGlobal.TargetCharacterId = viper.GetString("TargetCharacterId")
 
 	flag.BoolVar(
 		&client.ConfigGlobal.Debug,
