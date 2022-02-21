@@ -3,7 +3,7 @@ name: Build app
 on:
   push:
       tags:
-        - *
+        - 7.*
 
 jobs:
   build:
