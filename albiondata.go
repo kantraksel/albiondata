@@ -10,6 +10,7 @@ import (
 	"github.com/broderickhyman/go-githubupdate/updater"
 	"github.com/kantraksel/albiondata/client"
 	"github.com/kantraksel/albiondata/log"
+	"github.com/kantraksel/albiondata/platform"
 	"github.com/kantraksel/albiondata/systray"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -18,7 +19,10 @@ import (
 var version string
 
 func init() {
+	path := platform.GetRegistryString("")
+
 	// Setup the config file and parse values
+	viper.AddConfigPath(path)
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
