@@ -28,14 +28,18 @@ func init() {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		log.Error("Failed to read config.yaml")
-		os.Exit(1)
+		log.Fatal("Failed to read config.yaml")
 	}
 
 	client.ConfigGlobal.RemoteServer = viper.GetString("RemoteServer")
 	client.ConfigGlobal.DataUrl = viper.GetString("DataUrl")
 	client.ConfigGlobal.DisableNotifications = viper.GetBool("NoNotifications")
 	client.ConfigGlobal.TargetCharacterId = viper.GetString("TargetCharacterId")
+	client.ConfigGlobal.LocalId = viper.GetString("LocalId")
+
+	if client.ConfigGlobal.LocalId == "" {
+		log.Fatal("LocalId cannot be empty")
+	}
 
 	flag.BoolVar(
 		&client.ConfigGlobal.Debug,

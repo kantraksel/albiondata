@@ -16,6 +16,11 @@ type operationJoinResponse struct {
 	GuildName     string          `mapstructure:"51"`
 }
 
+type messageJoin struct {
+	CharacterID string
+	Location    string
+}
+
 //CharacterPartsJSON string          `mapstructure:"6"`
 //Edition            string          `mapstructure:"38"`
 
@@ -43,5 +48,6 @@ func (op operationJoinResponse) Process(state *albionState) {
 	}
 	state.CharacterName = op.CharacterName*/
 
-	sendMsgToUploader(state, "", state)
+	msg := messageJoin{ConfigGlobal.LocalId, op.Location}
+	sendMsgToUploader(msg, "", state)
 }
