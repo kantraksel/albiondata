@@ -47,10 +47,18 @@ jobs:
         TOP_SRCDIR: ${{ github.workspace }}
         INSTALLER_COMPRESSION: lzma
 
-    - name: Upload artifacts
+    - name: Upload installer
       uses: actions/upload-artifact@v2.3.1
       with:
         name: installer
         path: albiondata-installer.exe
+        if-no-files-found: error
+        retention-days: 7
+
+    - name: Upload standalone exe
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: app
+        path: albiondata.exe
         if-no-files-found: error
         retention-days: 7
