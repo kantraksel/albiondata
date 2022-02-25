@@ -17,8 +17,8 @@ type operationJoinResponse struct {
 }
 
 type messageJoin struct {
-	CharacterID string
-	Location    string
+	CharacterID    string
+	LocationString string
 }
 
 //CharacterPartsJSON string          `mapstructure:"6"`
