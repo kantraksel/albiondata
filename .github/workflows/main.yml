@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2019
     env:
       npcapVersion: "1.60"
       appVersion: ${{ github.ref_name }}
