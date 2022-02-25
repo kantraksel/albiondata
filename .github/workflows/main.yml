@@ -9,9 +9,8 @@ jobs:
   build:
     runs-on: windows-latest
     env:
-      npcap_version: "1.60"
-      app_name: "albiondata"
-      app_version: ${{ github.ref_name }}
+      npcapVersion: "1.60"
+      appVersion: ${{ github.ref_name }}
     steps:
     - uses: actions/checkout@v2
 
@@ -21,30 +20,30 @@ jobs:
         go-version: 1.17
 
     - name: Download npcap
-      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-${{ env.npcap_version }}.exe
+      run: curl.exe -o npcap.exe https://npcap.com/dist/npcap-${{ env.npcapVersion }}.exe
 
     - name: Build
-      run: go build -ldflags "-s -w -X main.version=${{ env.app_version }}" -o ${{ env.app_name }}.exe -v -x albiondata.go
+      run: go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" -o albiondata.exe -v -x albiondata.go
       env:
-        CGO_CPPFLAGS: "-I ${{ github.workspace }}/thirdparty/WpdPack/Include/"
-        CGO_LDFLAGS: "-L ${{ github.workspace }}/thirdparty/WpdPack/Lib/x64/"
+        CGO_CPPFLAGS: "-I ${{ env.workspace }}/thirdparty/WpdPack/Include/"
+        CGO_LDFLAGS: "-L ${{ env.workspace }}/thirdparty/WpdPack/Lib/x64/"
         GOOS: windows
         GOARCH: amd64
         CGO_ENABLED: 1
         
     - name: Add icon
-      run: ${{ github.workspace }}/thirdparty/rcedit/rcedit.exe ${{ env.app_name }}.exe --set-icon icon/albiondata-client.ico
+      run: ${{ github.workspace }}/thirdparty/rcedit/rcedit.exe albiondata.exe --set-icon icon/albiondata-client.ico
       
     - name: Build installer
       uses: joncloud/makensis-action@v3.6
       with:
         script-file: pkg/nsis/albiondata.nsi
-        arguments: -DPACKAGE_VERSION="${{ env.VERSION }}" -DPACKAGE="${{ env.PACKAGE }}" -DPACKAGE_NAME="${{ env.PACKAGE_NAME }}" -DPACKAGE_EXE="${{ env.PACKAGE_EXE }}" -DTOP_SRCDIR="${{ env.TOP_SRCDIR }}" -DOUTFILE="${{ env.TOP_SRCDIR }}/${{ env.PACKAGE }}-installer.exe" -X"SetCompressor /FINAL /SOLID ${{ env.INSTALLER_COMPRESSION }}"
+        arguments: -DPACKAGE_VERSION="${{ env.VERSION }}" -DPACKAGE="${{ env.PACKAGE }}" -DPACKAGE_NAME="${{ env.PACKAGE_NAME }}" -DPACKAGE_EXE="${{ env.PACKAGE_EXE }}" -DTOP_SRCDIR="${{ env.TOP_SRCDIR }}" -DOUTFILE="${{ env.TOP_SRCDIR }}/albiondata-installer.exe" -X"SetCompressor /FINAL /SOLID ${{ env.INSTALLER_COMPRESSION }}"
       env:
-        VERSION: ${{ env.app_version }}
-        PACKAGE: ${{ env.app_name }}
+        VERSION: ${{ env.appVersion }}
+        PACKAGE: albiondata
         PACKAGE_NAME: Albion Data
-        PACKAGE_EXE: ${{ env.app_name }}.exe
+        PACKAGE_EXE: albiondata.exe
         TOP_SRCDIR: ${{ github.workspace }}
         INSTALLER_COMPRESSION: lzma
 
@@ -52,6 +51,6 @@ jobs:
       uses: actions/upload-artifact@v2.3.1
       with:
         name: installer
-        path: ${{ env.app_name }}-installer.exe
+        path: albiondata-installer.exe
         if-no-files-found: error
         retention-days: 7
