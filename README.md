@@ -1,5 +1,3 @@
-[![Build app](https://github.com/kantraksel/albiondata/actions/workflows/main.yml/badge.svg)](https://github.com/kantraksel/albiondata/actions/workflows/main.yml)
-
 # Albion Data
 Custom data collector.
 
